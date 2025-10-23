@@ -100,17 +100,36 @@ const Index = () => {
 
         {account ? (
           <div className="space-y-8">
+            {/* Admin Badge */}
+            {isAdmin && (
+              <div className="glass-card p-4 rounded-xl bg-accent/10 border-accent/30">
+                <p className="text-center text-accent font-semibold">
+                  🔑 Admin Mode Active - You have full control over the election
+                </p>
+              </div>
+            )}
+
             {/* Status Section */}
             <ElectionStatus electionStarted={electionStarted} electionEnded={electionEnded} />
 
             {/* Admin Panel */}
-            {isAdmin && (
+            {isAdmin ? (
               <AdminPanel
                 contract={contract}
                 electionStarted={electionStarted}
                 electionEnded={electionEnded}
                 onUpdate={fetchElectionData}
               />
+            ) : (
+              <div className="glass-card p-6 rounded-2xl">
+                <h2 className="text-xl font-bold mb-3">Admin Controls</h2>
+                <p className="text-muted-foreground text-sm">
+                  Only the admin wallet ({ADMIN_ADDRESS.slice(0, 6)}...{ADMIN_ADDRESS.slice(-4)}) can manage the election.
+                </p>
+                <p className="text-muted-foreground text-sm mt-2">
+                  Admin can: Add candidates, Start election, End election
+                </p>
+              </div>
             )}
 
             {/* Winner Display */}
@@ -121,7 +140,7 @@ const Index = () => {
             {/* Candidates Section */}
             <div>
               <h2 className="text-3xl font-bold mb-6">
-                {electionEnded ? 'Final Results' : 'Candidates'}
+                {electionEnded ? 'Final Results' : electionStarted ? 'Live Results' : 'Candidates'}
               </h2>
               
               {isLoading ? (
@@ -147,10 +166,29 @@ const Index = () => {
                 </div>
               ) : (
                 <div className="glass-card p-12 rounded-2xl text-center">
-                  <p className="text-muted-foreground">No candidates added yet</p>
+                  <p className="text-xl font-semibold mb-2">No candidates yet</p>
+                  <p className="text-muted-foreground">
+                    {isAdmin 
+                      ? "Use the admin panel above to add candidates" 
+                      : "The admin needs to add candidates to start the election"}
+                  </p>
                 </div>
               )}
             </div>
+
+            {/* How to Use Section */}
+            {!isAdmin && !electionStarted && candidates.length === 0 && (
+              <div className="glass-card p-8 rounded-2xl">
+                <h3 className="text-2xl font-bold mb-4">How This Works</h3>
+                <div className="space-y-3 text-muted-foreground">
+                  <p>✅ <strong>Step 1:</strong> Admin adds candidates</p>
+                  <p>✅ <strong>Step 2:</strong> Admin starts the election</p>
+                  <p>✅ <strong>Step 3:</strong> Voters cast their votes (one per wallet)</p>
+                  <p>✅ <strong>Step 4:</strong> Admin ends the election</p>
+                  <p>✅ <strong>Step 5:</strong> Winner is announced!</p>
+                </div>
+              </div>
+            )}
           </div>
         ) : (
           <div className="glass-card p-12 rounded-2xl text-center max-w-2xl mx-auto">
