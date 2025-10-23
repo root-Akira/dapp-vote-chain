@@ -20,6 +20,10 @@ const Index = () => {
 
   const isAdmin = account.toLowerCase() === ADMIN_ADDRESS.toLowerCase();
 
+  console.log('Connected Account:', account);
+  console.log('Admin Address:', ADMIN_ADDRESS);
+  console.log('Is Admin:', isAdmin);
+
   const fetchElectionData = async () => {
     if (!contract) return;
 
